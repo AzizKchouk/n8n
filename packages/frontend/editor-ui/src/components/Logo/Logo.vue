@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import type { FrontendSettings } from '@n8n/api-types';
-import { computed, onMounted, useCssModule, useTemplateRef } from 'vue';
-import { useFavicon } from '@vueuse/core';
-
-import LogoIcon from './logo-icon.svg';
-import LogoText from './logo-text.svg';
+import { computed } from 'vue';
 
 const props = defineProps<
 	(
@@ -20,7 +16,7 @@ const props = defineProps<
 	}
 >();
 
-const { location, releaseChannel } = props;
+const { location } = props;
 
 const showLogoText = computed(() => {
 	if (location === 'authView') return true;
@@ -38,27 +34,11 @@ const containerClasses = computed(() => {
 		props.collapsed ? $style.sidebarCollapsed : $style.sidebarExpanded,
 	];
 });
-
-const svg = useTemplateRef<{ $el: Element }>('logo');
-onMounted(() => {
-	if (releaseChannel === 'stable' || !('createObjectURL' in URL)) return;
-
-	const logoEl = svg.value!.$el;
-
-	// Change the logo fill color inline, so that favicon can also use it
-	const logoColor = releaseChannel === 'dev' ? '#838383' : '#E9984B';
-	logoEl.querySelector('path')?.setAttribute('fill', logoColor);
-
-	// Reuse the SVG as favicon
-	const blob = new Blob([logoEl.outerHTML], { type: 'image/svg+xml' });
-	useFavicon(URL.createObjectURL(blob));
-});
 </script>
 
 <template>
 	<div :class="containerClasses" data-test-id="n8n-logo">
-		<LogoIcon ref="logo" :class="$style.logo" />
-		<LogoText v-if="showLogoText" :class="$style.logoText" />
+		<img src="/static/logo-futurenow.png" :class="$style.logo" />
 		<slot />
 	</div>
 </template>
@@ -68,6 +48,11 @@ onMounted(() => {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+.logo {
+	width: 32px;
+	height: 30px;
 }
 
 .logoText {
